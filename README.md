@@ -98,7 +98,7 @@ DateAndTime_FUN := sDateTime;
 ```iecst
 '2026-8-31 11:11:42:656'
 ```
-## Important
+### Important
 If NTP synchronization fails 5 times, alarm has been rised, for the STRING - retrieved DateAndTime from PC is then used instead.
 
 Apart from everything else, I have two ModbusTCP requests - one sends time to my PC through Wi-fi, other recieves Timestamp from my PC.
