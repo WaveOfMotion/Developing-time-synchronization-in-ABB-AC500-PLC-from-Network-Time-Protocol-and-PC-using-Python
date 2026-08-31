@@ -1,0 +1,2 @@
+# Developing-time-synchronization-in-ABB-AC500-PLC-from-Network-Time-Protocol-and-PC-using-Python
+As industrial design in synchronizing a programmable - logic - controller (PLC) using Network-Time-Protocol, a weakness arises when communication to NTP is lost and the client in other side expects that configured scheduler will perform without worries, a solution to this is - use two sources for time synchronization and rise NTP server alarm..
