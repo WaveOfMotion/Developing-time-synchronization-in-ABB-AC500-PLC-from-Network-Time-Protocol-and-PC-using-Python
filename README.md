@@ -139,13 +139,13 @@ from datetime import datetime, timezone
 from pymodbus.server import ModbusTcpServer
 from pymodbus.simulator import DataType, SimData, SimDevice
 ```
-Then you must deifne your Modbus port which is 502, and your IP address, where I use my Wi-fi adapter, since I am on th same network as my PLC:
+Then you must define your Modbus port which is 502, and your IP address, where I use my Wi-fi adapter, since I am on the same network as my PLC:
 ```
 PC_IP = "192.168.1.207"
 MODBUS_PORT = 502
 DEVICE_ID = 1
 ```
-The Modbus comunication itself is implemented in a way, that I send to my PC 8 registers, where the extra 9th register returns a non-zero value if PLC can't synchronize with NTP more than 5 times. And the same way PC sends 8 registers to my PLC, where in this project, my PLC acts as the backup time synchronzation source.
+The Modbus comunication itself is implemented in a way, that I send 8 registers to my PC, where the extra 9th register returns a non-zero value if PLC can't synchronize with NTP more than 5 times. And the same way, PC sends 8 registers to my PLC, where in this project, my PC acts as the backup time synchronzation source.
 
 Later on, I call asynchronous function to use function 'await', and allow background processing by configuring my Modbus Server as non-blocking:
 ```iecst
@@ -182,7 +182,7 @@ PC_Utc_DateTime = datetime.now(timezone.utc)
 ```
 , to be created while connection is active. If I would put this function call inside an 'if' statement, it would be created only when the 'if' statement is satisified. So PLC always reads and gets DateAndTime from PC, it just decides when to use it as main source.
 
-Important here, is now that PC acts as Modbus Server, it just needs ot allocate data memory where to store it's DateAndTime, so I store it:
+Important here, is now that PC acts as Modbus Server, it just needs to allocate data memory where to store its DateAndTime, so I store it:
 ```iecst
 await server.async_setValues(
             device_id=DEVICE_ID,
@@ -201,13 +201,13 @@ await server.async_setValues
 ```
 , you don't.
 
-For 'await server.async_setValues' you specify:
+For 'await server.async_setValues' you specify your array:
 ```iecst
 values=pc_datetime
 ```
 , where if you look a bit higher, I create an array, and the number of elements of that array is interpreted as number of elements.
 
-Later on, I am adding an 'optional', that if you want to see values being printed by function 'print' , you would say if values has changed then print. So I define my idea as:
+Later on, I am adding an 'optional', that if you want to see values being printed by function 'print' , you would say: values has changed ?: print. So I define my idea as:
 ```iecst
 if PLC_Ntp_DateTime != previous_plc_values:
 
@@ -221,7 +221,7 @@ Then in the end, you would see the last line as:
 ```iecst
 await asyncio.sleep(0.1)
 ```
-, where basically this decreases consumed RAM by the Python, putting it asleep every 100 ms everytime wen new values from the PLC are being received.
+, where basically this decreases consumed RAM by the Python running, putting it asleep every 100 ms everytime when new values from the PLC are being received.
 
 The last function:
 ```
@@ -230,7 +230,11 @@ if __name__ == "__main__":
 ```
 , can be interpreted as following:
 
-When you start your script which includes function main(), a function __name__ at that momenent is created and it's value is "__main__". Since I am running asynchronous function defined as main(), I must enter the last line as showed before.
+When you start your script which includes function main(), a function:
+```iecst __name__ ``` 
+, at that momenent is created, and its value is: 
+```iecst "__main__" ``` 
+Since I am running asynchronous function defined as main(), I must enter the last line as showed before.
 
 # Conclusion
 After developing Network-Time-Snchronization from two sources using Modbus TCP, I constructed a STRING of Timestamp, which in further devlepment could be sent through IEC 60870-5-101 communication protocol or TCP/IP communication. Modbus TCP was used only as a industrial communication example.
