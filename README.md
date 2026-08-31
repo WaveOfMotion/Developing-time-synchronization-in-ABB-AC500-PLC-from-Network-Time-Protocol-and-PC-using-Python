@@ -130,7 +130,7 @@ ModTcp.Addr    := 200;
 ModTcp.Nb      := 8;
 ModTcp.Data    := ADR(PC_recv_DT);
 ```
-## Python programing
+## Python-programing
 In Python I first import libraries:
 ```
 import asyncio
