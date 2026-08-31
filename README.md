@@ -182,7 +182,7 @@ PC_Utc_DateTime = datetime.now(timezone.utc)
 ```
 , to be created while connection is active. If I would put this function call inside an 'if' statement, it would be created only when the 'if' statement is satisified. So PLC always reads and gets DateAndTime from PC, it just decides when to use it as main source.
 
-Important here, is now that PC acts as Modbus Server, it jsut needs ot allocate data memory where to store it's DateAndTime, so I store it:
+Important here, is now that PC acts as Modbus Server, it just needs ot allocate data memory where to store it's DateAndTime, so I store it:
 ```iecst
 await server.async_setValues(
             device_id=DEVICE_ID,
@@ -205,7 +205,7 @@ For 'await server.async_setValues' you specify:
 ```iecst
 values=pc_datetime
 ```
-, where if you look a bit higher, I create an array and the number of elements of that array is interpreted as number of elements.
+, where if you look a bit higher, I create an array, and the number of elements of that array is interpreted as number of elements.
 
 Later on, I am adding an 'optional', that if you want to see values being printed by function 'print' , you would say if values has changed then print. So I define my idea as:
 ```iecst
