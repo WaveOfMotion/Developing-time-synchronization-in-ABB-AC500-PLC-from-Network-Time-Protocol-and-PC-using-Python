@@ -232,7 +232,7 @@ if __name__ == "__main__":
 
 When you start your script which includes function main(), a function:
 ```iecst __name__ ``` 
-, at that momenent is created, and its value is: 
+, at that moment is created, and its value is: 
 ```iecst "__main__" ``` 
 Since I am running asynchronous function defined as main(), I must enter the last line as showed before.
 
