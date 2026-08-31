@@ -242,5 +242,5 @@ When you start your script which includes function main(), a function:
 Since I am running asynchronous function defined as main(), I must enter the last line as showed before.
 
 # Conclusion
-After developing Network-Time-Sinchronization from two sources using Modbus TCP, I constructed a STRING of Timestamp. Important is this, that now if one time synchronization source shuts down, second source is brought up. This in further devlepment stages could be sent through IEC 60870-5-101 communication protocol or TCP/IP communication inclduding more security-layers. Modbus TCP was used only as a industrial communication example.
+After developing Network-Time-Sinchronization from two sources using Modbus TCP, I constructed a STRING of Timestamp. Important is this, that now if one time synchronization source shuts down, second source is brought up. This in further devlepment stages could be sent through IEC 60870-5-101 communication protocol or TCP/IP communication inclduding more security-layers. Modbus TCP was used only as an industrial communication example.
 
