@@ -1,7 +1,16 @@
 # Developing-time-synchronization-in-ABB-AC500-PLC-from-Network-Time-Protocol-and-PC-using-Python
 As industrial design in synchronizing a programmable - logic - controller (PLC) using Network-Time-Protocol, a weakness arises when communication to NTP is lost and the client in other side expects that configured scheduler will perform without worries, a solution to this is - use two sources for time synchronization and rise NTP server alarm.
 
-I developed a Modbus TCP communication between ABB PLC and PC and implemented NTP time synchronization by using libraries:
+In my Python script, I use pymodbus library, and for installation on Windows, you need to open your command-line-prompt and type:
+```
+pip install pymodbus
+```
+, and the documentation is available in:
+```iecst
+https://pymodbus.readthedocs.io/en/latest/
+```
+
+Apart from everything else, I developed a Modbus TCP communication between ABB PLC and PC and implemented NTP time synchronization by using libraries:
   1) SysTimeRtc = SysTimeRtc, 3.5.21.30 (System)
   2) AC500_ModbusTcp = ModbusTcp, 1.1.10.3 (ABB)
   3) AC500_Pm = Pm, 1.2.11.4 (ABB)
@@ -90,6 +99,7 @@ DateAndTime_FUN := sDateTime;
 ```
 ### Important
 If NTP synchronization fails 5 times, alarm has been rised, for STRING retrieved DateAndTime from PC is used instead.
+
 Apart from everything else, I have two ModbusTCP requests - one sends time to my PC through Wi-fi, other recieves Timestamp from my PC.
 ```iecst
 TARGET_IP_DWORD   := IP_ADR_STRING_TO_DWORD(TARGET_IP);
@@ -119,3 +129,107 @@ ModTcp.Addr    := 200;
 ModTcp.Nb      := 8;
 ModTcp.Data    := ADR(PC_recv_DT);
 ```
+In Python I first import libraries:
+```
+import asyncio
+from datetime import datetime, timezone
+
+from pymodbus.server import ModbusTcpServer
+from pymodbus.simulator import DataType, SimData, SimDevice
+```
+Then you must deifne your Modbus port which is 502, and your IP address, where I use my Wi-fi adapter, since I am on th same network as my PLC:
+```
+PC_IP = "192.168.1.207"
+MODBUS_PORT = 502
+DEVICE_ID = 1
+```
+The Modbus comunication itself is implemented in a way, that I send to my PC 8 registers, where the extra 9th register returns a non-zero value if PLC can't synchronize with NTP more than 5 times. And the same way PC sends 8 registers to my PLC, where in this project, my PLC acts as the backup time synchronzation source.
+
+Later on, I call asynchronous function to use function 'await', and allow background processing by configuring my Modbus Server as non-blocking:
+```iecst
+async def main():
+
+    # Allocate register memory from 0 to 999
+    device = SimDevice(
+        DEVICE_ID,
+        SimData(
+            address=0,
+            datatype=DataType.UINT16,
+            values=[0] * 1000 
+        )
+    )
+
+    # Create one Modbus TCP server
+    server = ModbusTcpServer(
+        device,
+        address=(PC_IP, MODBUS_PORT)
+    )
+
+# ----------------------- Start server without blocking this coroutine -----------------------
+    await server.serve_forever(background=True)
+    previous_plc_values = None
+```
+The important part is that you see, that I construct DateAndTime data outside an statement IF function like:
+```
+if Ntp_sync_status == Request_PC_TimeStamp:
+...
+```
+, because I want this:
+```
+PC_Utc_DateTime = datetime.now(timezone.utc)
+```
+, to be created while connection is active. If I would put this function call inside an 'if' statement, it would be created only when the 'if' statement is satisified. So PLC always reads and gets DateAndTime from PC, it just decides when to use it as main source.
+
+Important here, is now that PC acts as Modbus Server, it jsut needs ot allocate data memory where to store it's DateAndTime, so I store it:
+```iecst
+await server.async_setValues(
+            device_id=DEVICE_ID,
+            func_code=3,
+            address=PC_DateTime_reg_group,
+            values=pc_datetime
+        )
+```
+As you see, for storing values I don't need to specify - 'count' , only address. In other words, for:
+```iecst
+server.async_getValues
+```
+, you must specify, but for:
+```iecst
+await server.async_setValues
+```
+, you don't.
+
+For 'await server.async_setValues' you specify:
+```iecst
+values=pc_datetime
+```
+, where if you look a bit higher, I create an array and the number of elements of that array is interpreted as number of elements.
+
+Later on, I am adding an 'optional', that if you want to see values being printed by function 'print' , you would say if values has changed then print. So I define my idea as:
+```iecst
+if PLC_Ntp_DateTime != previous_plc_values:
+
+... print values
+
+previous_plc_values = PLC_Ntp_DateTime.copy()
+```
+This prints everytime, if values has changed.
+
+Then in the end, you would see the last line as:
+```iecst
+await asyncio.sleep(0.1)
+```
+, where basically this decreases consumed RAM by the Python, putting it asleep every 100 ms everytime wen new values from the PLC are being received.
+
+The last function:
+```
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+, can be interpreted as following:
+
+When you start your script which includes function main(), a function __name__ at that momenent is created and it's value is "__main__". Since I am running asynchronous function defined as main(), I must enter the last line as showed before.
+
+# Conclusion
+After developing Network-Time-Snchronization from two sources using Modbus TCP, I constructed a STRING of Timestamp, which in further devlepment could be sent through IEC 60870-5-101 communication protocol or TCP/IP communication. Modbus TCP was used only as a industrial communication example.
+
