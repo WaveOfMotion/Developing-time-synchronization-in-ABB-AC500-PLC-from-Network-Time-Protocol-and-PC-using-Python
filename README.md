@@ -145,7 +145,8 @@ PC_IP = "192.168.1.207"
 MODBUS_PORT = 502
 DEVICE_ID = 1
 ```
-You can check your Wi-fi adapter IP address by opening command-line-prompt, and entering: ```iecst ipconfig ```
+You can check your Wi-fi adapter IP address by opening command-line-prompt, and entering: 
+``` iecst ipconfig ```
 
 The Modbus comunication itself is implemented in a way, that I send 8 registers to my PC, where the extra 9th register returns a non-zero value if PLC can't synchronize with NTP more than 5 times. And the same way, PC sends 8 registers to my PLC, where in this project, my PC acts as the backup time synchronzation source.
 
