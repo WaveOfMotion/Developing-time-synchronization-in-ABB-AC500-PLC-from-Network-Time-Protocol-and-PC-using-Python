@@ -15,7 +15,7 @@ Apart from everything else, I developed a Modbus TCP communication between ABB P
   2) AC500_ModbusTcp = ModbusTcp, 1.1.10.3 (ABB)
   3) AC500_Pm = Pm, 1.2.11.4 (ABB)
 
-## PLC-pograming
+## PLC-programing
 In my application, I call SysTimeRtc function and conversion to date:
 ```iecst
 eHighResConvertResult := SysTimeRtc.SysTimeRtcConvertHighResToDate(
