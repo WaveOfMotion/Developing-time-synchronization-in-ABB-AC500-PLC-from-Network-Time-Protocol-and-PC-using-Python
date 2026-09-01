@@ -1,6 +1,11 @@
 # Redundant-two-source-time-synchronization-architecture-using-ABB-AC500-v3-PLC-and-Python-programing
 As industrial design in synchronizing a programmable - logic - controller (PLC) using Network-Time-Protocol, a weakness arises when communication to NTP is lost and the client in other side expects that configured scheduler will perform without worries, a solution to this is - use two sources for time synchronization and rise NTP server alarm.
 
+Application was developped in ABB Automation Builder 2.9, which can be downloaded for free from the official site given below.
+```iecst
+https://www.abb.com/global/en/areas/motion/digital-tools/automation-builder/software-download
+```
+
 In my Python script, I use pymodbus library, and for installation on Windows, you need to open your command-line-prompt and type:
 ```
 pip install pymodbus
